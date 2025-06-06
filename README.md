@@ -12,13 +12,13 @@ AI-powered content writing utilizes artificial intelligence to efficiently produ
 
 - **Authentication**:
 
-  - [ ] Implement NextAuth for Login and Registration.
-    - [ ] Add email feedback for registration and login events.
-    - [ ] Support Google OAuth and Credentials Provider login.
+  - [x] Implement NextAuth for Login and Registration.
+    - [x] Add email feedback for registration and login events.
+    - [x] Support Google OAuth and Credentials Provider login.
 
 - **Development Setup**:
-  - [ ] Configure ESLint and Prettier for code quality.
-  - [ ] Set up GitHub Workflow CI/CD pipeline integrated with Vercel.
+  - [x] Configure ESLint and Prettier for code quality.
+  - [x] Set up GitHub Workflow CI/CD pipeline integrated with Vercel.
 
 ## Revenue Model
 
