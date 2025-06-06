@@ -1,36 +1,44 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered Content Writing
 
-## Getting Started
+AI-powered content writing utilizes artificial intelligence to efficiently produce high-quality, engaging, and relevant content. By leveraging advanced algorithms and natural language processing, it can generate articles, blogs, and other written materials tailored to specific audiences and purposes, saving time and boosting productivity.
 
-First, run the development server:
+## Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Generate tailored content for blogs, articles, and more.
+- Save time with automated content creation.
+- Enhance productivity with AI-driven tools.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Todo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- **Authentication**:
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+  - [ ] Implement NextAuth for Login and Registration.
+    - [ ] Add email feedback for registration and login events.
+    - [ ] Support Google OAuth and Credentials Provider login.
 
-## Learn More
+- **Development Setup**:
+  - [ ] Configure ESLint and Prettier for code quality.
+  - [ ] Set up GitHub Workflow CI/CD pipeline integrated with Vercel.
 
-To learn more about Next.js, take a look at the following resources:
+## Revenue Model
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- **Freemium Tier**:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+  - Start with 50 free credits upon registration.
+  - Use credits for content generation.
+  - Limited API calls per day.
 
-## Deploy on Vercel
+- **Basic Tier**:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  - Monthly subscription with a fixed number of credits.
+  - Higher API call limits compared to the Freemium tier.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Pro Tier**:
+  - Monthly subscription with a larger credit allowance.
+  - Access premium features and the highest API call limits.
+
+## Why Choose Us?
+
+- **Efficiency**: Save hours of manual writing with AI-powered tools.
+- **Scalability**: Generate content at scale for diverse needs.
+- **Customization**: Tailor content to specific audiences and purposes.
