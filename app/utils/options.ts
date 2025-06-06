@@ -53,7 +53,7 @@ export const options = {
         },
       },
       authorize: async (credentials): Promise<User | null> => {
-        console.log("incd-creds", JSON.stringify(credentials, null, 2));
+        // console.log("incd-creds", JSON.stringify(credentials, null, 2));
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
@@ -95,10 +95,18 @@ export const options = {
     }),
   ],
   callbacks: {
-    jwt: ({ user, token }) => {
+    jwt: async ({ user, token }) => {
       if (user) {
         token.id = user.id;
         token.email = user.email;
+        // Fetch additional user data including onboarding status
+        const userData = await db.query.userTable.findFirst({
+          where: (f, { eq }) => eq(f.id, user.id),
+          columns: { isOnboarded: true, name: true, picture: true },
+        });
+        token.isOnboarded = userData?.isOnboarded || false;
+        token.name = userData?.name || user.name;
+        token.picture = userData?.picture || null;
       }
       return token;
     },
@@ -106,6 +114,9 @@ export const options = {
       if (token) {
         session.user.id = token?.id as string;
         session.user.email = token?.email as string;
+        session.user.name = token?.name as string;
+        session.user.isOnboarded = token?.isOnboarded as boolean;
+        session.user.image = token?.picture as string;
       }
       return session;
     },
@@ -118,10 +129,19 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      /** The user's postal address. */
       id: string;
       email: string;
       name: string;
+      image?: string;
+      isOnboarded: boolean;
     };
+  }
+  
+  interface JWT {
+    id: string;
+    email: string;
+    name: string;
+    picture?: string;
+    isOnboarded: boolean;
   }
 }
