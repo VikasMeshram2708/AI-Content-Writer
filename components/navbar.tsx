@@ -27,9 +27,11 @@ export default async function Navbar() {
             ) : (
               <>
                 <Button variant={"link"}>
-                  <Link href="/api/auth/signin">Login</Link>
+                  <Link href="/login">Login</Link>
                 </Button>
-                <Button>Register</Button>
+                <Button>
+                  <Link href="/register">Register</Link>
+                </Button>
               </>
             )}
           </div>
