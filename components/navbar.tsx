@@ -1,8 +1,11 @@
 import { NotepadText } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { getServerSession } from "next-auth";
+import { options } from "@/app/utils/options";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const session = await getServerSession(options);
   return (
     <nav className="bg-background p-4">
       <div className="max-w-7xl mx-auto">
@@ -12,8 +15,23 @@ export default function Navbar() {
             <Link href="/">Navbar</Link>
           </h2>
           <div className="flex items-center gap-4">
-            <Button variant={"link"}>Login</Button>
-            <Button>Register</Button>
+            {session ? (
+              <>
+                <span className="text-sm">
+                  Hello, {session.user?.name || session.user?.email}
+                </span>
+                <Button variant={"link"}>
+                  <Link href="/api/auth/signout">Logout</Link>
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button variant={"link"}>
+                  <Link href="/api/auth/signin">Login</Link>
+                </Button>
+                <Button>Register</Button>
+              </>
+            )}
           </div>
         </div>
       </div>
