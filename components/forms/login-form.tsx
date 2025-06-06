@@ -15,7 +15,6 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { FormEvent, useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
-import { emailOnLogin } from "@/app/utils/mailer";
 
 export function LoginForm({
   className,
