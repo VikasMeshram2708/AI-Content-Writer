@@ -15,7 +15,7 @@ const { NEXTAUTH_SECRET, NEXTAUTH_GOOGLE_ID, NEXTAUTH_GOOGLE_SECRET } =
 
 if (!NEXTAUTH_SECRET || !NEXTAUTH_GOOGLE_ID || !NEXTAUTH_GOOGLE_SECRET) {
   throw new Error(
-    "NextAuth environment variables are not set. Please check your .env file.",
+    "NextAuth environment variables are not set. Please check your .env file."
   );
 }
 
@@ -74,7 +74,7 @@ export const options = {
           // compare the hashed password
           const isValidPass = await bcrypt.compare(
             credentials?.password,
-            user?.password,
+            user?.password
           );
 
           if (!isValidPass) {
@@ -96,7 +96,7 @@ export const options = {
     }),
   ],
   callbacks: {
-    signIn: async ({ user, account, profile }) => {
+    signIn: async ({ user, account }) => {
       if (account?.provider === "google") {
         // Check if user exists by email
         const existingUser = await db.query.userTable.findFirst({
@@ -118,7 +118,7 @@ export const options = {
             return false;
           }
         }
-        
+
         // Send login email for Google OAuth users
         try {
           await emailOnLogin(user.email!);
@@ -134,18 +134,23 @@ export const options = {
       if (user) {
         token.email = user.email;
       }
-      
+
       // Only refresh user data from database in these cases:
       // 1. New login (user object present)
       // 2. Session update triggered (from onboarding form)
       // 3. Token doesn't have required data
-      if (user || trigger === "update" || !token.id || token.isOnboarded === undefined) {
+      if (
+        user ||
+        trigger === "update" ||
+        !token.id ||
+        token.isOnboarded === undefined
+      ) {
         if (token.email) {
           const userData = await db.query.userTable.findFirst({
-            where: (f, { eq }) => eq(f.email, token.email),
+            where: (f, { eq }) => eq(f.email, token.email as string),
             columns: { id: true, isOnboarded: true, name: true, picture: true },
           });
-          
+
           if (userData) {
             token.id = userData.id;
             token.isOnboarded = userData.isOnboarded || false;
@@ -160,7 +165,7 @@ export const options = {
           }
         }
       }
-      
+
       return token;
     },
     session: ({ session, token }) => {

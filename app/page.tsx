@@ -57,7 +57,7 @@ export default function Home() {
                     </div>
                     <div className="space-y-4">
                       <p className="font-mono text-sm text-muted-foreground">
-                        &gt; Generate blog post about "AI in content creation"
+                        &gt; Generate blog post about &quot;AI in content creation&quot;
                       </p>
                       <p className="font-mono text-sm">
                         AI is revolutionizing content creation by enabling
@@ -223,7 +223,7 @@ export default function Home() {
               What Our Users Say
             </h2>
             <p className="text-lg text-muted-foreground">
-              Don't just take our word for it - hear from our satisfied users
+              Don&apos;t just take our word for it - hear from our satisfied users
             </p>
           </div>
           <div className="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
@@ -254,7 +254,7 @@ export default function Home() {
                 <CardContent className="pt-6">
                   <div className="space-y-4">
                     <p className="text-muted-foreground">
-                      "{testimonial.quote}"
+                      &quot;{testimonial.quote}&quot;
                     </p>
                     <div className="flex items-center gap-4">
                       <div className="h-10 w-10 rounded-full bg-muted">

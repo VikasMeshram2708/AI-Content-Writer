@@ -75,7 +75,7 @@ export function OnboardingForm({
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome to Content Flow!</CardTitle>
           <CardDescription>
-            Let's set up your profile to get started
+            Let&apos;s set up your profile to get started
           </CardDescription>
         </CardHeader>
         <CardContent>

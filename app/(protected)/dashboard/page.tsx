@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth";
 import { options } from "@/app/utils/options";
 import { redirect } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
@@ -31,9 +32,11 @@ export default async function DashboardPage() {
             {session.user.image && (
               <div>
                 <strong>Profile Picture:</strong>
-                <img
+                <Image
                   src={session.user.image}
                   alt="Profile"
+                  width={64}
+                  height={64}
                   className="w-16 h-16 rounded-full mt-2"
                 />
               </div>
@@ -51,7 +54,7 @@ export default async function DashboardPage() {
                 🎉 Onboarding Complete!
               </h2>
               <p className="text-gray-700">
-                Great! You've successfully completed the onboarding process.
+                Great! You&apos;ve successfully completed the onboarding process.
                 This is where your main chat feature and content creation tools
                 will be.
               </p>
