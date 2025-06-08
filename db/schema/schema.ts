@@ -1,4 +1,11 @@
-import { pgEnum, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 const timeStatmps = {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),
@@ -14,5 +21,6 @@ export const userTable = pgTable("users", {
   role: userRole().default("USER"),
   picture: text("picture"),
   password: text("password").notNull(),
+  isOnboarded: boolean("is_onboarded").default(false),
   ...timeStatmps,
 });

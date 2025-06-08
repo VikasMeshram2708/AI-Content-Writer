@@ -7,6 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions, User } from "next-auth";
 import { emailOnLogin } from "./mailer";
 import { db } from "@/db";
+import { userTable } from "@/db/schema/schema";
 import bcrypt from "bcryptjs";
 
 const { NEXTAUTH_SECRET, NEXTAUTH_GOOGLE_ID, NEXTAUTH_GOOGLE_SECRET } =
@@ -53,7 +54,7 @@ export const options = {
         },
       },
       authorize: async (credentials): Promise<User | null> => {
-        console.log("incd-creds", JSON.stringify(credentials, null, 2));
+        // console.log("incd-creds", JSON.stringify(credentials, null, 2));
         if (!credentials?.email || !credentials?.password) {
           throw new Error("Email and password are required");
         }
@@ -95,17 +96,85 @@ export const options = {
     }),
   ],
   callbacks: {
-    jwt: ({ user, token }) => {
+    signIn: async ({ user, account }) => {
+      if (account?.provider === "google") {
+        // Check if user exists by email
+        const existingUser = await db.query.userTable.findFirst({
+          where: (f, { eq }) => eq(f.email, user.email!),
+        });
+
+        if (!existingUser) {
+          // Create new user with Google data
+          try {
+            await db.insert(userTable).values({
+              email: user.email!,
+              name: user.name || "Unknown User",
+              picture: user.image,
+              password: "", // No password for OAuth users
+              isOnboarded: false,
+            });
+          } catch (error) {
+            console.error("Error creating Google user:", error);
+            return false;
+          }
+        }
+
+        // Send login email for Google OAuth users
+        try {
+          await emailOnLogin(user.email!);
+        } catch (error) {
+          console.error("Failed to send login email for OAuth user:", error);
+          // Don't block login if email fails
+        }
+      }
+      return true;
+    },
+    jwt: async ({ user, token, trigger }) => {
+      // If this is a new login (user object is present), set up initial token
       if (user) {
-        token.id = user.id;
         token.email = user.email;
       }
+
+      // Only refresh user data from database in these cases:
+      // 1. New login (user object present)
+      // 2. Session update triggered (from onboarding form)
+      // 3. Token doesn't have required data
+      if (
+        user ||
+        trigger === "update" ||
+        !token.id ||
+        token.isOnboarded === undefined
+      ) {
+        if (token.email) {
+          const userData = await db.query.userTable.findFirst({
+            where: (f, { eq }) => eq(f.email, token.email as string),
+            columns: { id: true, isOnboarded: true, name: true, picture: true },
+          });
+
+          if (userData) {
+            token.id = userData.id;
+            token.isOnboarded = userData.isOnboarded || false;
+            token.name = userData.name;
+            token.picture = userData.picture;
+          } else if (user) {
+            // Fallback for new users during initial login
+            token.id = user.id;
+            token.isOnboarded = false;
+            token.name = user.name;
+            token.picture = user.image;
+          }
+        }
+      }
+
       return token;
     },
     session: ({ session, token }) => {
       if (token) {
         session.user.id = token?.id as string;
         session.user.email = token?.email as string;
+        session.user.name = token?.name as string;
+        session.user.isOnboarded = token?.isOnboarded as boolean;
+        session.user.image = token?.picture as string;
       }
       return session;
     },
@@ -118,10 +187,19 @@ declare module "next-auth" {
    */
   interface Session {
     user: {
-      /** The user's postal address. */
       id: string;
       email: string;
       name: string;
+      image?: string;
+      isOnboarded: boolean;
     };
+  }
+
+  interface JWT {
+    id: string;
+    email: string;
+    name: string;
+    picture?: string;
+    isOnboarded: boolean;
   }
 }

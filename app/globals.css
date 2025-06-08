@@ -3,6 +3,9 @@
 
 @custom-variant dark (&:is(.dark *));
 
+.b {
+  border: 2px solid red;
+}
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);

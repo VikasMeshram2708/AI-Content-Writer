@@ -8,6 +8,14 @@ AI-powered content writing utilizes artificial intelligence to efficiently produ
 - Save time with automated content creation.
 - Enhance productivity with AI-driven tools.
 
+## Stretch
+
+- [ ] Add Demo Section in landing page.
+
+- [ ] Chat Retention.
+
+- [ ] If the user is already onBoarded then directly redirect him to /chat page.
+
 ## Todo
 
 - **Authentication**:
