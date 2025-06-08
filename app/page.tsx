@@ -10,6 +10,8 @@ import {
 import { Icons } from "@/components/icons";
 import { PricingSection } from "@/components/pricing-section";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function Home() {
   return (
@@ -142,7 +144,7 @@ export default function Home() {
         </section>
 
         {/* Demo Section */}
-        {/* <section id="demo" className="bg-muted py-24 sm:py-32">
+        <section id="demo" className="bg-muted py-24 sm:py-32">
           <div className="container grid gap-12 lg:grid-cols-2">
             <div className="p-4 space-y-4">
               <h2 className="text-3xl font-bold">Try Content Flow</h2>
@@ -212,7 +214,7 @@ export default function Home() {
               </div>
             </div>
           </div>
-        </section> */}
+        </section>
 
         {/* Testimonials */}
         <section id="testimonials" className="container py-24 sm:py-32">

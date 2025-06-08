@@ -43,7 +43,7 @@ export async function emailOnLogin(clientEmail: string) {
   } catch (e) {
     console.log(e);
     throw new Error(
-      `Login Email Failed - ${(e as Error).message ?? "Something went wrong."}`
+      `Login Email Failed - ${(e as Error).message ?? "Something went wrong."}`,
     );
   }
 }
@@ -70,7 +70,7 @@ export async function emailOnRegister(clientEmail: string) {
   } catch (e) {
     console.log(e);
     throw new Error(
-      `Register Email Failed - ${(e as Error).message ?? "Something went wrong."}`
+      `Register Email Failed - ${(e as Error).message ?? "Something went wrong."}`,
     );
   }
 }

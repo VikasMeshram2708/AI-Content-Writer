@@ -14,7 +14,8 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { FormEvent, useState, useTransition } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, AlertCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export function LoginForm({
   className,
@@ -26,22 +27,35 @@ export function LoginForm({
   });
   const [isPending, startTransition] = useTransition();
 
+  const [errorMessage, setErrorMessage] = useState("");
   const onSubmit = async (e: FormEvent) => {
+    e.preventDefault();
     startTransition(async () => {
-      e.preventDefault();
       try {
         if (!value.email.trim() || !value.password.trim()) {
-          alert("Please fill in all fields.");
+          setErrorMessage("Please fill in all fields.");
           return;
         }
-        await signIn("credentials", {
-          redirect: true,
-          callbackUrl: "/on-board",
+
+        // Clear any previous error message
+        setErrorMessage("");
+
+        const result = await signIn("credentials", {
+          redirect: false,
           email: value.email,
           password: value.password,
         });
+
+        if (result?.error) {
+          setErrorMessage("Invalid email or password. Please try again.");
+        } else if (result?.ok) {
+          // Redirect on successful login
+          window.location.href = "/on-board";
+        }
       } catch (e) {
-        alert((e as Error)?.message ?? "Something went wrong.");
+        setErrorMessage(
+          (e as Error)?.message ?? "An unexpected error occurred.",
+        );
       }
     });
   };
@@ -111,6 +125,12 @@ export function LoginForm({
                   {isPending ? <Loader2 className="animate-spin" /> : "Login"}
                 </Button>
               </div>
+              {errorMessage && (
+                <Alert variant="destructive">
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+              )}
               <div className="text-center text-sm">
                 {"Don't"} have an account?{" "}
                 <Link href="/register" className="underline underline-offset-4">

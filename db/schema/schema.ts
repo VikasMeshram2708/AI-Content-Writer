@@ -1,4 +1,11 @@
-import { pgEnum, pgTable, text, timestamp, uuid, boolean } from "drizzle-orm/pg-core";
+import {
+  pgEnum,
+  pgTable,
+  text,
+  timestamp,
+  uuid,
+  boolean,
+} from "drizzle-orm/pg-core";
 
 const timeStatmps = {
   createdAt: timestamp("created_at", { mode: "string" }).defaultNow(),

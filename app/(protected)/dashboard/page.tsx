@@ -1,6 +1,8 @@
 import { getServerSession } from "next-auth";
 import { options } from "@/app/utils/options";
 import { redirect } from "next/navigation";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default async function DashboardPage() {
   const session = await getServerSession(options);
@@ -38,15 +40,23 @@ export default async function DashboardPage() {
             )}
           </div>
         </div>
-
-        <div className="mt-8 bg-blue-50 rounded-lg p-6">
-          <h2 className="text-xl font-semibold mb-4">
-            🎉 Onboarding Complete!
-          </h2>
-          <p className="text-gray-700">
-            Great! You've successfully completed the onboarding process. This is
-            where your main chat feature and content creation tools will be.
-          </p>
+        <div className="mt-8">
+          {session?.user?.isOnboarded ? (
+            <Link href="/chat">
+              <Button>Continue to Chat</Button>
+            </Link>
+          ) : (
+            <div className="mt-8 bg-blue-50 rounded-lg p-6">
+              <h2 className="text-xl font-semibold mb-4">
+                🎉 Onboarding Complete!
+              </h2>
+              <p className="text-gray-700">
+                Great! You've successfully completed the onboarding process.
+                This is where your main chat feature and content creation tools
+                will be.
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </div>

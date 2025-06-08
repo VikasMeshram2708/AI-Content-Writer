@@ -23,7 +23,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           status: 400,
-        }
+        },
       );
     }
     const { name, email, password } = parsed.data;
@@ -40,7 +40,7 @@ export async function POST(req: NextRequest) {
             "Content-Type": "application/json",
           },
           status: 400,
-        }
+        },
       );
     }
     // hash the password
@@ -64,7 +64,7 @@ export async function POST(req: NextRequest) {
           "Content-Type": "application/json",
         },
         status: 201,
-      }
+      },
     );
   } catch (e) {
     const err = (e as Error)?.message ?? "Something went wrong.";

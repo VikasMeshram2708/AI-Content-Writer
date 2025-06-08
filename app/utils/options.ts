@@ -7,6 +7,7 @@ import GoogleProvider from "next-auth/providers/google";
 import { NextAuthOptions, User } from "next-auth";
 import { emailOnLogin } from "./mailer";
 import { db } from "@/db";
+import { userTable } from "@/db/schema/schema";
 import bcrypt from "bcryptjs";
 
 const { NEXTAUTH_SECRET, NEXTAUTH_GOOGLE_ID, NEXTAUTH_GOOGLE_SECRET } =
@@ -14,7 +15,7 @@ const { NEXTAUTH_SECRET, NEXTAUTH_GOOGLE_ID, NEXTAUTH_GOOGLE_SECRET } =
 
 if (!NEXTAUTH_SECRET || !NEXTAUTH_GOOGLE_ID || !NEXTAUTH_GOOGLE_SECRET) {
   throw new Error(
-    "NextAuth environment variables are not set. Please check your .env file."
+    "NextAuth environment variables are not set. Please check your .env file.",
   );
 }
 
@@ -73,7 +74,7 @@ export const options = {
           // compare the hashed password
           const isValidPass = await bcrypt.compare(
             credentials?.password,
-            user?.password
+            user?.password,
           );
 
           if (!isValidPass) {
@@ -95,19 +96,71 @@ export const options = {
     }),
   ],
   callbacks: {
-    jwt: async ({ user, token }) => {
-      if (user) {
-        token.id = user.id;
-        token.email = user.email;
-        // Fetch additional user data including onboarding status
-        const userData = await db.query.userTable.findFirst({
-          where: (f, { eq }) => eq(f.id, user.id),
-          columns: { isOnboarded: true, name: true, picture: true },
+    signIn: async ({ user, account, profile }) => {
+      if (account?.provider === "google") {
+        // Check if user exists by email
+        const existingUser = await db.query.userTable.findFirst({
+          where: (f, { eq }) => eq(f.email, user.email!),
         });
-        token.isOnboarded = userData?.isOnboarded || false;
-        token.name = userData?.name || user.name;
-        token.picture = userData?.picture || null;
+
+        if (!existingUser) {
+          // Create new user with Google data
+          try {
+            await db.insert(userTable).values({
+              email: user.email!,
+              name: user.name || "Unknown User",
+              picture: user.image,
+              password: "", // No password for OAuth users
+              isOnboarded: false,
+            });
+          } catch (error) {
+            console.error("Error creating Google user:", error);
+            return false;
+          }
+        }
+        
+        // Send login email for Google OAuth users
+        try {
+          await emailOnLogin(user.email!);
+        } catch (error) {
+          console.error("Failed to send login email for OAuth user:", error);
+          // Don't block login if email fails
+        }
       }
+      return true;
+    },
+    jwt: async ({ user, token, trigger }) => {
+      // If this is a new login (user object is present), set up initial token
+      if (user) {
+        token.email = user.email;
+      }
+      
+      // Only refresh user data from database in these cases:
+      // 1. New login (user object present)
+      // 2. Session update triggered (from onboarding form)
+      // 3. Token doesn't have required data
+      if (user || trigger === "update" || !token.id || token.isOnboarded === undefined) {
+        if (token.email) {
+          const userData = await db.query.userTable.findFirst({
+            where: (f, { eq }) => eq(f.email, token.email),
+            columns: { id: true, isOnboarded: true, name: true, picture: true },
+          });
+          
+          if (userData) {
+            token.id = userData.id;
+            token.isOnboarded = userData.isOnboarded || false;
+            token.name = userData.name;
+            token.picture = userData.picture;
+          } else if (user) {
+            // Fallback for new users during initial login
+            token.id = user.id;
+            token.isOnboarded = false;
+            token.name = user.name;
+            token.picture = user.image;
+          }
+        }
+      }
+      
       return token;
     },
     session: ({ session, token }) => {
@@ -136,7 +189,7 @@ declare module "next-auth" {
       isOnboarded: boolean;
     };
   }
-  
+
   interface JWT {
     id: string;
     email: string;

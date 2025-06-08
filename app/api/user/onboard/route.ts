@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         {
           headers: { "Content-Type": "application/json" },
           status: 401,
-        }
+        },
       );
     }
 
@@ -33,7 +33,7 @@ export async function POST(req: NextRequest) {
         {
           headers: { "Content-Type": "application/json" },
           status: 400,
-        }
+        },
       );
     }
 
@@ -54,7 +54,7 @@ export async function POST(req: NextRequest) {
       {
         headers: { "Content-Type": "application/json" },
         status: 200,
-      }
+      },
     );
   } catch (e) {
     const err = (e as Error)?.message ?? "Something went wrong.";
@@ -64,4 +64,3 @@ export async function POST(req: NextRequest) {
     });
   }
 }
-

@@ -21,7 +21,7 @@ export function OnboardingForm({
   ...props
 }: React.ComponentProps<"div">) {
   const router = useRouter();
-  const { data: session } = useSession();
+  const { data: session, update } = useSession();
   const [isPending, startTransition] = useTransition();
   const [value, setValue] = useState({
     name: session?.user?.name || "",
@@ -32,7 +32,7 @@ export function OnboardingForm({
   async function onSubmit(e: FormEvent) {
     e.preventDefault();
     setError("");
-    
+
     startTransition(async () => {
       try {
         const response = await fetch("/api/user/onboard", {
@@ -45,14 +45,20 @@ export function OnboardingForm({
             picture: value.picture,
           }),
         });
-        
+
         const result = await response.json();
-        
+
         if (result.success) {
+          // Update the session to reflect the new onboarded status
+          await update();
           // Redirect to main app/dashboard after successful onboarding
           router.push("/dashboard"); // or wherever your main app is
         } else {
-          setError(result.error?.fieldErrors ? "Please check your inputs" : result.error);
+          setError(
+            result.error?.fieldErrors
+              ? "Please check your inputs"
+              : result.error,
+          );
         }
       } catch (e) {
         setError((e as Error)?.message ?? "Something went wrong.");
@@ -61,7 +67,10 @@ export function OnboardingForm({
   }
 
   return (
-    <div className={cn("flex flex-col gap-6 max-w-md mx-auto", className)} {...props}>
+    <div
+      className={cn("flex flex-col gap-6 max-w-md mx-auto", className)}
+      {...props}
+    >
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-2xl">Welcome to Content Flow!</CardTitle>
@@ -77,21 +86,19 @@ export function OnboardingForm({
                   {error}
                 </div>
               )}
-              
+
               <div className="grid gap-3">
                 <Label htmlFor="name">Display Name</Label>
                 <Input
                   value={value.name}
-                  onChange={(e) =>
-                    setValue({ ...value, name: e.target.value })
-                  }
+                  onChange={(e) => setValue({ ...value, name: e.target.value })}
                   id="name"
                   type="text"
                   placeholder="How should we call you?"
                   required
                 />
               </div>
-              
+
               <div className="grid gap-3">
                 <Label htmlFor="picture">Profile Picture URL (Optional)</Label>
                 <div className="relative">
@@ -110,7 +117,7 @@ export function OnboardingForm({
                   You can add a profile picture URL or skip this for now
                 </p>
               </div>
-              
+
               <Button disabled={isPending} type="submit" className="w-full">
                 {isPending ? (
                   <>
@@ -128,4 +135,3 @@ export function OnboardingForm({
     </div>
   );
 }
-

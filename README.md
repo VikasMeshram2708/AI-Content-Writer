@@ -12,6 +12,10 @@ AI-powered content writing utilizes artificial intelligence to efficiently produ
 
 - [ ] Add Demo Section in landing page.
 
+- [ ] Chat Retention.
+
+- [ ] If the user is already onBoarded then directly redirect him to /chat page.
+
 ## Todo
 
 - **Authentication**:

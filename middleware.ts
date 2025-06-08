@@ -49,7 +49,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
-        
+
         // Allow public pages
         if (
           pathname === "/" ||
@@ -59,12 +59,12 @@ export default withAuth(
         ) {
           return true;
         }
-        
+
         // Require authentication for all other pages
         return !!token;
       },
     },
-  }
+  },
 );
 
 export const config = {
