@@ -1,184 +1,188 @@
-import { Menu, NotepadText, X } from "lucide-react";
-import Link from "next/link";
-import { Button } from "./ui/button";
-import { getServerSession } from "next-auth";
-import { options } from "@/app/utils/options";
-import { navLinks } from "@/data";
-import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-  SheetClose,
-} from "./ui/sheet";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { cn } from "@/lib/utils";
+"use client";
 
-export default async function Navbar() {
-  const session = await getServerSession(options);
-  const userInitials =
-    session?.user?.name
-      ?.split(" ")
-      .map((n) => n[0])
-      .join("") || "U";
+import { useState, useEffect, useRef } from "react";
+import { Menu, NotepadText, X } from "lucide-react";
+import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
+
+export default function Navbar() {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  console.log("isUserMenuOpen", isUserMenuOpen);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  const session = null; // User is not logged in
+
+  const navLinks = [
+    { name: "Dashboard", href: "/dashboard" },
+    { name: "Generate", href: "/generate" },
+    { name: "Templates", href: "/templates" },
+    { name: "Analytics", href: "/analytics" },
+    { name: "Pricing", href: "/pricing" },
+  ];
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        mobileMenuRef.current &&
+        !mobileMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsMobileMenuOpen(false);
+      }
+      if (
+        userMenuRef.current &&
+        !userMenuRef.current.contains(event.target as Node)
+      ) {
+        setIsUserMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   return (
-    <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b">
-      <nav className="px-4 py-3">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          {/* Logo/Brand */}
-          <div className="flex items-center gap-2">
-            <Link
-              href="/"
-              className="flex items-center gap-2 group"
-              aria-label="Home"
-            >
-              <NotepadText className="h-6 w-6 text-primary group-hover:scale-110 transition-transform" />
-              <span className="text-xl font-semibold text-foreground group-hover:text-primary transition-colors">
-                Content Flow
-              </span>
-            </Link>
-          </div>
+    <>
+      <header className="fixed top-0 left-0 right-0 z-50 border-b bg-background/80 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+        <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex h-16 items-center justify-between">
+            <div className="flex items-center">
+              <Link href="/" className="flex items-center gap-3 group">
+                <div className="relative">
+                  <div className="absolute -inset-2 rounded-lg bg-gradient-to-r from-primary to-secondary opacity-0 transition-all duration-300 blur group-hover:opacity-20" />
+                  <NotepadText className="relative h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
+                </div>
+                <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-secondary transition-all duration-300">
+                  Content Flow
+                </span>
+              </Link>
+            </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden lg:flex items-center gap-6">
-            <ul className="flex items-center gap-1">
-              {navLinks.map((nl, idx) => (
-                <li key={idx}>
-                  <Link
-                    href={nl.href}
-                    className="px-3 py-2 rounded-md text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors"
-                  >
-                    {nl.name}
-                  </Link>
-                </li>
+            <div className="hidden lg:flex lg:items-center lg:space-x-1">
+              {navLinks.map((link) => (
+                <a
+                  key={link.name}
+                  href={link.href}
+                  className="relative px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground rounded-lg transition-all duration-200 group hover:bg-muted"
+                >
+                  <span className="relative z-10">{link.name}</span>
+                  <div className="absolute inset-0 bg-accent opacity-0 group-hover:opacity-100 rounded-lg transition-opacity duration-200" />
+                </a>
               ))}
-            </ul>
+            </div>
 
-            {session ? (
-              <div className="flex items-center gap-4 ml-4">
-                <div className="flex items-center gap-2">
-                  <Avatar className="h-8 w-8">
-                    <AvatarImage src={session.user?.image || undefined} />
-                    <AvatarFallback className="text-xs">
-                      {userInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <span className="text-sm text-muted-foreground">
-                    {session.user?.name || session.user?.email}
+            <div className="flex items-center space-x-2">
+              {session ? (
+                <div className="relative" ref={userMenuRef}>
+                  {/* user avatar + menu */}
+                </div>
+              ) : (
+                <div className="hidden sm:flex items-center space-x-3">
+                  <a
+                    href="/login"
+                    className={cn(
+                      buttonVariants({ variant: "ghost", size: "sm" }),
+                      "text-sm"
+                    )}
+                  >
+                    Sign In
+                  </a>
+                  <a
+                    href="/signup"
+                    className={cn(
+                      buttonVariants({ variant: "default", size: "sm" }),
+                      "text-sm px-4 py-2"
+                    )}
+                  >
+                    Get Started
+                  </a>
+                </div>
+              )}
+
+              <button
+                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                className="lg:hidden p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-200"
+              >
+                {isMobileMenuOpen ? (
+                  <X className="h-6 w-6" />
+                ) : (
+                  <Menu className="h-6 w-6" />
+                )}
+              </button>
+            </div>
+          </div>
+        </nav>
+      </header>
+
+      {isMobileMenuOpen && (
+        <div className="fixed inset-0 z-40 lg:hidden">
+          <div
+            className="fixed inset-0 bg-black/25 backdrop-blur-sm"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          <div
+            ref={mobileMenuRef}
+            className="fixed top-0 right-0 h-full w-80 bg-background shadow-xl transform transition-transform duration-300 ease-in-out animate-in slide-in-from-right"
+          >
+            <div className="flex flex-col h-full">
+              <div className="flex items-center justify-between p-6 border-b">
+                <div className="flex items-center gap-3">
+                  <NotepadText className="h-6 w-6 text-primary" />
+                  <span className="text-lg font-bold text-foreground">
+                    Content Flow
                   </span>
                 </div>
-                <Button
-                  asChild
-                  variant="ghost"
-                  size="sm"
-                  className="text-muted-foreground hover:text-foreground"
+                <button
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-200"
                 >
-                  <Link href="/api/auth/signout">Logout</Link>
-                </Button>
+                  <X className="h-5 w-5" />
+                </button>
               </div>
-            ) : (
-              <div className="flex items-center gap-2 ml-4">
-                <Button asChild variant="ghost" size="sm">
-                  <Link href="/login">Login</Link>
-                </Button>
-                <Button asChild size="sm">
-                  <Link href="/register">Register</Link>
-                </Button>
-              </div>
-            )}
-          </div>
-
-          {/* Mobile Navigation Trigger */}
-          <Sheet>
-            <SheetTrigger asChild className="lg:hidden">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-muted-foreground hover:text-foreground"
-                aria-label="Open menu"
-              >
-                <Menu className="h-5 w-5" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="right" className="w-[300px] sm:w-[350px]">
-              <SheetHeader>
-                <div className="flex items-center justify-between">
-                  <SheetTitle className="flex items-center gap-2">
-                    <NotepadText className="h-6 w-6 text-primary" />
-                    <span className="text-xl font-semibold">Content Flow</span>
-                  </SheetTitle>
-                  <SheetClose asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 -mr-2"
-                      aria-label="Close menu"
+              <div className="flex-1 px-6 py-6 overflow-y-auto">
+                <nav className="space-y-2">
+                  {navLinks.map((link) => (
+                    <a
+                      key={link.name}
+                      href={link.href}
+                      className="block px-4 py-3 text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-all duration-200"
+                      onClick={() => setIsMobileMenuOpen(false)}
                     >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </SheetClose>
-                </div>
-              </SheetHeader>
-
-              <div className="mt-8 flex flex-col h-[calc(100%-60px)]">
-                <ul className="space-y-1">
-                  {navLinks.map((nl, idx) => (
-                    <li key={idx}>
-                      <SheetClose asChild>
-                        <Link
-                          href={nl.href}
-                          className={cn(
-                            "block px-3 py-2 rounded-md text-base font-medium",
-                            "text-muted-foreground hover:text-foreground hover:bg-accent",
-                            "transition-colors"
-                          )}
-                        >
-                          {nl.name}
-                        </Link>
-                      </SheetClose>
-                    </li>
+                      {link.name}
+                    </a>
                   ))}
-                </ul>
-
-                <div className="mt-auto pt-8 border-t">
-                  {session ? (
-                    <div className="space-y-4">
-                      <div className="flex items-center gap-3">
-                        <Avatar className="h-10 w-10">
-                          <AvatarImage src={session.user?.image || undefined} />
-                          <AvatarFallback>{userInitials}</AvatarFallback>
-                        </Avatar>
-                        <div>
-                          <p className="text-sm font-medium text-foreground">
-                            {session.user?.name || session.user?.email}
-                          </p>
-                          <p className="text-xs text-muted-foreground">
-                            Account
-                          </p>
-                        </div>
-                      </div>
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href="/api/auth/signout">Sign Out</Link>
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="space-y-2">
-                      <Button asChild className="w-full">
-                        <Link href="/register">Create Account</Link>
-                      </Button>
-                      <Button asChild variant="outline" className="w-full">
-                        <Link href="/login">Sign In</Link>
-                      </Button>
-                    </div>
-                  )}
+                </nav>
+              </div>
+              <div className="border-t p-6">
+                <div className="space-y-3">
+                  <Link
+                    href="/signup"
+                    className={cn(
+                      buttonVariants({ variant: "default" }),
+                      "w-full text-sm bg-gradient-to-r from-primary to-secondary"
+                    )}
+                  >
+                    Get Started
+                  </Link>
+                  <Link
+                    href="/login"
+                    className={cn(
+                      buttonVariants({ variant: "outline" }),
+                      "w-full text-sm"
+                    )}
+                  >
+                    Sign In
+                  </Link>
                 </div>
               </div>
-            </SheetContent>
-          </Sheet>
+            </div>
+          </div>
         </div>
-      </nav>
-    </header>
+      )}
+
+      <div className="h-16" />
+    </>
   );
 }
