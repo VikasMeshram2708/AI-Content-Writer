@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { Menu, NotepadText, X, User, LogOut, Settings } from "lucide-react";
+import { Menu, NotepadText, X } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
@@ -9,6 +9,7 @@ import Link from "next/link";
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  console.log("isUserMenuOpen", isUserMenuOpen);
   const mobileMenuRef = useRef<HTMLDivElement>(null);
   const userMenuRef = useRef<HTMLDivElement>(null);
 
@@ -48,7 +49,7 @@ export default function Navbar() {
         <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-16 items-center justify-between">
             <div className="flex items-center">
-              <a href="/" className="flex items-center gap-3 group">
+              <Link href="/" className="flex items-center gap-3 group">
                 <div className="relative">
                   <div className="absolute -inset-2 rounded-lg bg-gradient-to-r from-primary to-secondary opacity-0 transition-all duration-300 blur group-hover:opacity-20" />
                   <NotepadText className="relative h-8 w-8 text-primary group-hover:scale-110 transition-transform duration-300" />
@@ -56,7 +57,7 @@ export default function Navbar() {
                 <span className="text-xl font-bold bg-gradient-to-r from-foreground to-muted-foreground bg-clip-text text-transparent group-hover:from-primary group-hover:to-secondary transition-all duration-300">
                   Content Flow
                 </span>
-              </a>
+              </Link>
             </div>
 
             <div className="hidden lg:flex lg:items-center lg:space-x-1">

@@ -3,7 +3,6 @@
 import { FormEvent, useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useChatStore } from "@/app/context/chat-store";
 import { GoogleGenAI } from "@google/genai";
 import {
   Card,
@@ -22,10 +21,8 @@ import remarkGfm from "remark-gfm";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
-import { useTheme } from "next-themes";
 
 export default function GeneratePage() {
-  const { theme } = useTheme();
   const contentTypes = [
     "Blog Post",
     "Social Media",
@@ -290,7 +287,7 @@ export default function GeneratePage() {
                     </h3>
                     <p className="text-sm text-muted-foreground max-w-xs">
                       Enter your topic, select content type and tone, then click
-                      "Generate Content"
+                      {"Generate Content"}
                     </p>
                   </div>
                 )}
