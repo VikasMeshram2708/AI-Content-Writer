@@ -17,3 +17,20 @@ export const navLinks: NavLink[] = [
     href: "/privacy",
   },
 ];
+
+// chat page utils
+export const contentTypes: ContentType[] = [
+  "Blog Post",
+  "Social Media",
+  "Product Description",
+  "Email",
+  "Ad Copy",
+];
+
+export const tones: Tone[] = [
+  "Professional",
+  "Friendly",
+  "Casual",
+  "Persuasive",
+  "Informative",
+];

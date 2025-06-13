@@ -25,6 +25,8 @@ AI-powered content writing utilizes artificial intelligence to efficiently produ
     - [x] Support Google OAuth and Credentials Provider login.
 
 - **Development Setup**:
+
+  - [ ] Add Enable Saving feature (when clicked on enable saving it should redirect to subscription page and then the user will have to pickup an subscription model in order to enable saving feature.)
   - [x] Configure ESLint and Prettier for code quality.
   - [x] Set up GitHub Workflow CI/CD pipeline integrated with Vercel.
 
