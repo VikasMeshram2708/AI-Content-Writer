@@ -90,7 +90,7 @@ export default function Navbar() {
                     Sign In
                   </a>
                   <a
-                    href="/signup"
+                    href="/register"
                     className={cn(
                       buttonVariants({ variant: "default", size: "sm" }),
                       "text-sm px-4 py-2"
